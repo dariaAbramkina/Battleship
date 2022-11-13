@@ -9,5 +9,9 @@ public class Main {
             field.enterCoordinatesForShip(ship);
             field.printField();
         }
+        System.out.println("The game starts!");
+        field.printField();
+        field.firstShoot();
+        field.printField();
     }
 }

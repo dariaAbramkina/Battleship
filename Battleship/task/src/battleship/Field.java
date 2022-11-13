@@ -1,7 +1,9 @@
 package battleship;
 
 import java.util.Scanner;
+
 import static java.lang.String.format;
+
 public class Field {
     private char[][] field;
 
@@ -46,14 +48,39 @@ public class Field {
         }
     }
 
+    public void firstShoot() {
+        System.out.println("Take a shot!");
+        boolean areCoordinateValid = false;
+        while (!areCoordinateValid) {
+            System.out.print("> ");
+            int[] coordinates;
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+            if (!areCoordinatesOfShootValid(input)) {
+                System.out.println("Error! You entered the wrong coordinates! Try again:");
+            } else {
+                coordinates = convertCoordinatesToInt(input);
+                makeShoot(coordinates);
+                areCoordinateValid = true;
+            }
+        }
+    }
+
     public int[] convertCoordinatesToInt(String inputLine) {
         String[] input = inputLine.split(" ");
-        int[] coordinates = new int[4];
-        coordinates[0] = Columns.valueOfLetter(input[0].charAt(0)).rowValue;
-        coordinates[1] = Integer.parseInt(input[0].substring(1)) - 1;
-        coordinates[2] = Columns.valueOfLetter(input[1].charAt(0)).rowValue;
-        coordinates[3] = Integer.parseInt(input[1].substring(1)) - 1;
-        return coordinates;
+        if (input.length == 2) {
+            int[] coordinates = new int[4];
+            coordinates[0] = Columns.valueOfLetter(input[0].charAt(0)).rowValue;
+            coordinates[1] = Integer.parseInt(input[0].substring(1)) - 1;
+            coordinates[2] = Columns.valueOfLetter(input[1].charAt(0)).rowValue;
+            coordinates[3] = Integer.parseInt(input[1].substring(1)) - 1;
+            return coordinates;
+        } else {
+            int[] coordinates = new int[2];
+            coordinates[0] = Columns.valueOfLetter(input[0].charAt(0)).rowValue;
+            coordinates[1] = Integer.parseInt(input[0].substring(1)) - 1;
+            return coordinates;
+        }
     }
 
     public int getLengthByCoordinates(int[] coordinates) {
@@ -126,4 +153,30 @@ public class Field {
         }
         return result != 0;
     }
+
+    public boolean areCoordinatesOfShootValid(String inputLine) {
+        boolean firstCoordinate = false;
+        boolean secondCoordinate = false;
+        for (Columns c : Columns.values()) {
+            if (c.name().equals(inputLine.substring(0, 1))) {
+                firstCoordinate = true;
+            }
+        }
+        int coordinateTwo = Integer.parseInt(inputLine.substring(1));
+        if (coordinateTwo > 0 && coordinateTwo <= 10) {
+            secondCoordinate = true;
+        }
+        return firstCoordinate && secondCoordinate;
+    }
+
+    public void makeShoot(int[] coordinates) {
+        if (field[coordinates[0]][coordinates[1]] == 'O') {
+            field[coordinates[0]][coordinates[1]] = 'X';
+            System.out.print("You hit a ship!");
+        } else {
+            field[coordinates[0]][coordinates[1]] = 'M';
+            System.out.print("You missed!");
+        }
+    }
+
 }
