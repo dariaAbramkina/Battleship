@@ -1,2 +1,27 @@
 content:
 - Debugging techniques
+- Static members
+- Enums in Java
+- Fields and methods in enum
+- Hiding and overriding
+- Polymorphism
+- Abstract class
+- Interface
+- Boxing and unboxing
+- Introduction to generic programming
+- Generics and Object
+- The Collections Framework overview
+- ArrayList
+- Processing strings
+- The List interface
+- StringBuilder
+- The Set interface
+- Comparable
+- The Map interface
+- Inner classes
+- Nested classes
+- Lambda expressions
+- Anonymous classes
+- Functional interfaces
+- Functional data processing with streams
+- Optional

@@ -2,8 +2,8 @@ type: choice
 is_multiple_choice: false
 options:
 - text: Break fast
-- text: Ruin fast
 - text: Fail fast
+- text: Ruin fast
 - text: Run fast
 files:
 - name: src/Task.java

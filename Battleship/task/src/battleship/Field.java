@@ -6,6 +6,7 @@ import static java.lang.String.format;
 
 public class Field {
     private char[][] field;
+    private char[][] shootingField;
 
     public Field() {
         field = new char[10][10];
@@ -13,7 +14,13 @@ public class Field {
             for (int j = 0; j < field[i].length; j++) {
                 field[i][j] = '~';
             }
+        shootingField = new char[10][10];
+        for (int i = 0; i < shootingField.length; i++)
+            for (int j = 0; j < shootingField[i].length; j++) {
+                shootingField[i][j] = '~';
+            }
     }
+
 
     public void printField() {
         char rowLetter = 'A';
@@ -22,6 +29,18 @@ public class Field {
             System.out.print(rowLetter++);
             for (int j = 0; j < field[i].length; j++) {
                 System.out.print(" " + field[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public void printEmptyField() {
+        char rowLetter = 'A';
+        System.out.println(" 1 2 3 4 5 6 7 8 9 10");
+        for (int i = 0; i < shootingField.length; i++) {
+            System.out.print(rowLetter++);
+            for (int j = 0; j < shootingField[i].length; j++) {
+                System.out.print(" " + shootingField[i][j]);
             }
             System.out.println();
         }
@@ -48,8 +67,7 @@ public class Field {
         }
     }
 
-    public void firstShoot() {
-        System.out.println("Take a shot!");
+    public void takeShoot() {
         boolean areCoordinateValid = false;
         while (!areCoordinateValid) {
             System.out.print("> ");
@@ -154,6 +172,76 @@ public class Field {
         return result != 0;
     }
 
+    public boolean isShipSank(int[] coordinates) {
+        int lastCoordinate = field[coordinates[0]].length - 1;
+        int counter = 0;
+        if (coordinates[0] == 0 && coordinates[1] == 0) {
+            for (int i = coordinates[0]; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[1]; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] == lastCoordinate && coordinates[1] == lastCoordinate) {
+            for (int i = coordinates[0] - 1; i < coordinates[0]; i++)
+                for (int j = coordinates[1] - 1; j < coordinates[1]; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] == 0 && coordinates[1] == lastCoordinate) {
+            for (int i = coordinates[0]; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[1] - 1; j < coordinates[1]; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] == lastCoordinate && coordinates[1] == 0) {
+            for (int i = coordinates[0] - 1; i < coordinates[0]; i++)
+                for (int j = coordinates[1]; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] == 0 && coordinates[1] != 0) {
+            for (int i = coordinates[0]; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[1] - 1; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[1] == lastCoordinate && coordinates[0] != lastCoordinate) {
+            for (int i = coordinates[0] - 1; i < coordinates[0]; i++)
+                for (int j = coordinates[1] - 1; j < coordinates[1]; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] != 0 && coordinates[1] == 0) {
+            for (int i = coordinates[0] - 1; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[1]; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else if (coordinates[0] == lastCoordinate && coordinates[1] != lastCoordinate) {
+            for (int i = coordinates[0] - 1; i < coordinates[0]; i++)
+                for (int j = coordinates[1] - 1; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        } else {
+            for (int i = coordinates[0] - 1; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[1] - 1; j <= coordinates[1] + 1; j++) {
+                    if (field[i][j] == 'O') {
+                        counter++;
+                    }
+                }
+        }
+        return counter == 0;
+    }
+
     public boolean areCoordinatesOfShootValid(String inputLine) {
         boolean firstCoordinate = false;
         boolean secondCoordinate = false;
@@ -169,14 +257,36 @@ public class Field {
         return firstCoordinate && secondCoordinate;
     }
 
-    public void makeShoot(int[] coordinates) {
-        if (field[coordinates[0]][coordinates[1]] == 'O') {
-            field[coordinates[0]][coordinates[1]] = 'X';
-            System.out.print("You hit a ship!");
-        } else {
-            field[coordinates[0]][coordinates[1]] = 'M';
-            System.out.print("You missed!");
-        }
+    public boolean areAllShipsHit() {
+        int counter = 0;
+        for (int i = 0; i < field.length; i++)
+            for (int j = 0; j < field[i].length; j++) {
+                if (field[i][j] == 'O') {
+                    counter++;
+                }
+            }
+        return counter == 0;
     }
 
+    public void makeShoot(int[] coordinates) {
+        if (field[coordinates[0]][coordinates[1]] == 'O' || field[coordinates[0]][coordinates[1]] == 'X') {
+            field[coordinates[0]][coordinates[1]] = 'X';
+            shootingField[coordinates[0]][coordinates[1]] = 'X';
+            if (areAllShipsHit()) {
+                printEmptyField();
+                System.out.println("You sank the last ship. You won. Congratulations!");
+            } else if (isShipSank(coordinates)) {
+                printEmptyField();
+                System.out.println("You sank a ship! Specify a new target:");
+            } else {
+                printEmptyField();
+                System.out.println("You hit a ship!");
+            }
+        } else {
+            field[coordinates[0]][coordinates[1]] = 'M';
+            shootingField[coordinates[0]][coordinates[1]] = 'M';
+            printEmptyField();
+            System.out.println("You missed!");
+        }
+    }
 }
